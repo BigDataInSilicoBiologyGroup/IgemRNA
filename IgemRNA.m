@@ -22,6 +22,8 @@ global postOptTasksGroup
 global initCobraWithUpdates
 global initCobraNoUpdates
 
+addpath('Scripts');
+
 openDlg();
 
 function openDlg()
@@ -29,26 +31,26 @@ function openDlg()
     
     % Transcriptomics Data Input
     global trGroup
-    trGroup = uibuttongroup('parent', d, 'Title', 'Load Transcriptomics Data','TitlePosition','lefttop','Position',[.01 .85 0.98 0.1]);
+    trGroup = uibuttongroup('parent', d, 'Title', 'Load Transcriptomics Data','TitlePosition','lefttop','Position',[.01 .88 0.98 0.1]);
     e = uicontrol('parent',trGroup, 'Style', 'edit', 'HorizontalAlignment', 'left', 'enable', 'off', 'pos', [10, 10, 470, 20]);
     trDataPath = uicontrol('parent', trGroup, 'Style', 'pushbutton', 'String', 'Open', 'pos',[500, 10, 75, 20], 'Callback', {@Data_Selected,e});
 
     % Model Input
     global modelGroup
-    modelGroup = uibuttongroup('parent', d, 'Title', 'Load Model','TitlePosition','lefttop','Position',[.01 .75 0.98 0.1]);
+    modelGroup = uibuttongroup('parent', d, 'Title', 'Load Model','TitlePosition','lefttop','Position',[.01 .78 0.98 0.1]);
     e2 = uicontrol('parent',modelGroup, 'Style', 'edit', 'HorizontalAlignment', 'left', 'enable', 'off', 'pos', [10, 10, 470, 20]);
     modelPath = uicontrol('parent', modelGroup, 'Style', 'pushbutton', 'String', 'Open', 'pos',[500, 10, 75, 20], 'Callback', {@Data_Selected,e2});
     
     % Medium Data Input
     global mediumGroup
-    mediumGroup = uibuttongroup('parent', d, 'Title', 'Load Medium Data','TitlePosition','lefttop','Position',[.01 .65 0.98 0.1]);
+    mediumGroup = uibuttongroup('parent', d, 'Title', 'Load Medium Data','TitlePosition','lefttop','Position',[.01 .68 0.98 0.1]);
     e3 = uicontrol('parent',mediumGroup, 'Style', 'edit', 'HorizontalAlignment', 'left', 'enable', 'off', 'pos', [10, 10, 470, 20]);
     mediumDataPath = uicontrol('parent', mediumGroup, 'Style', 'pushbutton', 'String', 'Open', 'pos',[500, 10, 75, 20], 'Callback', {@Data_Selected,e3});
 
     global thValueSelectionGroup
-    thValueSelectionGroup = uibuttongroup('parent',d,'Title','Global Threshold Value Selection','TitlePosition','lefttop','visible','off','Position',[.52 .45 0.47 0.2]);
+    thValueSelectionGroup = uibuttongroup('parent',d,'Title','Global Threshold Value Selection','TitlePosition','lefttop','visible','off','Position',[.52 .48 0.47 0.2]);
     lowerThLabel = uicontrol('Style', 'text', 'parent', thValueSelectionGroup, 'String', 'Lower Threshold: ', 'HorizontalAlignment', 'left', 'pos', [5 70 100 20]);
-    lowerThreshold = uicontrol('parent', thValueSelectionGroup, 'Style', 'edit', 'HorizontalAlignment', 'left', 'pos', [120, 72, 100, 20], 'callback',@Numeric_Validate);
+    lowerThreshold = uicontrol('parent', thValueSelectionGroup, 'Style', 'edit', 'String', '0', 'HorizontalAlignment', 'left', 'pos', [120, 72, 100, 20], 'callback',@Numeric_Validate);
     global upperThLabel
     global upperThreshold
     upperThLabel = uicontrol('visible', 'off', 'Style', 'text', 'parent', thValueSelectionGroup, 'String', 'Upper Threshold: ', 'HorizontalAlignment', 'left', 'pos', [5 40 100 20]);
@@ -59,7 +61,7 @@ function openDlg()
     
     % Thresholding Approach Radio Buttons
     global thGroup
-    thGroup = uibuttongroup('parent',d,'Title','Thresholding Approach','TitlePosition','lefttop','visible','off','Position',[.01 .45 0.5 0.2]);
+    thGroup = uibuttongroup('parent',d,'Title','Thresholding Approach','TitlePosition','lefttop','visible','off','Position',[.01 .48 0.5 0.2]);
     t1 = uicontrol('Style','Radio','String','Global T1 (one global)','pos',[10 70 400 15],'parent',thGroup, 'callback',{@Threshold_Approach_changed});
     t2 = uicontrol('Style','Radio','String','Local T1 (one global + local)','pos',[10 50 400 15],'parent',thGroup, 'callback',{@Threshold_Approach_changed});
     t3 = uicontrol('Style','Radio','String','Local T2 (two global + local)','pos',[10 30 400 15],'parent',thGroup, 'callback',{@Threshold_Approach_changed});
@@ -67,14 +69,14 @@ function openDlg()
     
     % Gene Mapping Approach Radio Buttons
     global gmGroup
-    gmGroup = uibuttongroup('parent',d,'Title','Gene Mapping Approach','TitlePosition','lefttop','visible','off','Position',[.01 .35 0.3 0.1]);
+    gmGroup = uibuttongroup('parent',d,'Title','Gene Mapping Approach','TitlePosition','lefttop','visible','off','Position',[.01 .38 0.3 0.1]);
     gm1 = uicontrol('Style','Radio','String','AND/OR=MIN/MAX','pos',[10 30 400 15],'parent',gmGroup);
     gm2 = uicontrol('Style','Radio','String','AND/OR=MIN/SUM','pos',[10 10 400 15],'parent',gmGroup);
     gmGroup.Visible = 'off';
     
     % Bound Constraining Options
     global boundConstrGroup
-    boundConstrGroup = uibuttongroup('parent',d,'Title','Constraining Options','TitlePosition','lefttop','visible','off','Position',[.32 .35 0.67 0.1]);
+    boundConstrGroup = uibuttongroup('parent',d,'Title','Constraining Options','TitlePosition','lefttop','visible','off','Position',[.32 .38 0.67 0.1]);
     constrIrreversible = uicontrol('Style','Radio','String','Only irreversible reactions','pos',[10 30 310 15],'parent',boundConstrGroup);
     consrtAll = uicontrol('Style', 'Radio', 'String', 'All reactions','pos', [10 10 310 15], 'parent',boundConstrGroup);
     % Preserve growth requirements options
@@ -87,7 +89,7 @@ function openDlg()
     global nonOptCompareTarget
     global nonOptLabel1
     global nonOptLabel2
-    nonOptTasksGroup = uibuttongroup('parent',d,'Title','Non-optimization Tasks','TitlePosition','lefttop','visible','off','Position',[.01 .05 0.5 0.3]);
+    nonOptTasksGroup = uibuttongroup('parent',d,'Title','Non-optimization Tasks','TitlePosition','lefttop','visible','off','Position',[.01 .08 0.5 0.3]);
     nonOptT1 = uicontrol('parent',nonOptTasksGroup,'Style','checkbox','String','Filter highly and lowly expressed genes', 'pos',[10 150 400 15]);
     nonOptT2 = uicontrol('parent',nonOptTasksGroup,'Style','checkbox','String','Filter lowly expressed genes', 'pos',[10 130 400 15]);
     nonOptT3 = uicontrol('parent',nonOptTasksGroup,'Style','checkbox','String','Filter up-/down-regulated genes between phenotypes', 'pos',[10 110 400 15],'callback',{@NonOptComparePhenotypes_changed});
@@ -103,10 +105,11 @@ function openDlg()
     global postOptCompareTarget
     global initCobraWithUpdates
     global initCobraNoUpdates
-    postOptTasksGroup = uibuttongroup('parent',d,'Title','Post-optimization Tasks','TitlePosition','lefttop','visible','off','Position',[.52 .05 0.47 0.3]);
-    postOptT1 = uicontrol('parent',postOptTasksGroup,'Style','checkbox','String','Filter non-flux reactions', 'pos',[10 150 400 15]);
-    postOptT2 = uicontrol('parent',postOptTasksGroup,'Style','checkbox','String','Filter rate limitting reactions', 'pos',[10 130 400 15],'callback',{@PostOpt_changed});
-    postOptT3 = uicontrol('parent',postOptTasksGroup,'Style','checkbox','String','Calculate flux shifts between phenotypes', 'pos',[10 110 400 15],'callback',{@PostOpt_changed});
+    postOptTasksGroup = uibuttongroup('parent',d,'Title','Post-optimization Tasks','TitlePosition','lefttop','visible','off','Position',[.52 .08 0.47 0.3]);
+    useExistingModels = uicontrol('parent',postOptTasksGroup,'Style','checkbox','String','Use existing context-specific models','fontweight', 'bold', 'pos',[10 165 400 15]);
+    postOptT1 = uicontrol('parent',postOptTasksGroup,'Style','checkbox','String','Filter non-flux reactions', 'pos',[10 148 400 15]);
+    postOptT2 = uicontrol('parent',postOptTasksGroup,'Style','checkbox','String','Filter rate limitting reactions', 'pos',[10 131 400 15],'callback',{@PostOpt_changed});
+    postOptT3 = uicontrol('parent',postOptTasksGroup,'Style','checkbox','String','Calculate flux shifts between phenotypes', 'pos',[10 114 400 15],'callback',{@PostOpt_changed});
     postOptLabel1 = uicontrol('visible','off','Style', 'text', 'parent', postOptTasksGroup, 'String', 'Compare', 'HorizontalAlignment', 'left', 'pos', [10 90 45 15]);
     postOptCompareSource = uicontrol('visible','off','Style','popupmenu','parent',postOptTasksGroup, 'String',{},'HorizontalAlignment', 'left', 'pos',[60 92 80 15]); 
     postOptLabel2 = uicontrol('visible','off','Style', 'text', 'parent', postOptTasksGroup, 'String', 'with', 'HorizontalAlignment', 'left', 'pos', [145 90 45 15]);
@@ -114,15 +117,16 @@ function openDlg()
     
     % Objective select
     objectiveFuctionLabel = uicontrol('Style', 'text', 'parent', postOptTasksGroup, 'String', 'Objective function Id: ', 'HorizontalAlignment', 'left', 'pos', [10 60 110 20]);
-    objectiveFunction = uicontrol('parent', postOptTasksGroup, 'String','r_2033', 'Style', 'edit', 'HorizontalAlignment', 'left', 'pos', [120, 63, 140, 20]);
+    objectiveFunction = uicontrol('parent', postOptTasksGroup, 'String','r_1761', 'Style', 'edit', 'HorizontalAlignment', 'left', 'pos', [120, 63, 140, 20]);
     %Biomass exclusion
-    excludeBiomass = uicontrol('parent',postOptTasksGroup,'Style','checkbox','String','Exclude biomass equation', 'pos',[10 40 400 15]);
+    excludeBiomass = uicontrol('parent',postOptTasksGroup,'Style','checkbox','String','Exclude biomass', 'pos',[10 40 110 20]);
+    biomassId = uicontrol('parent', postOptTasksGroup, 'String','r_4041', 'Style', 'edit', 'HorizontalAlignment', 'left', 'pos', [120, 45, 140, 20]);
     
     initCobraWithUpdates = uicontrol('visible','off','Style','Radio','String','Initialize CobraToolbox With Updates','pos',[10 20 400 15],'parent',postOptTasksGroup);
     initCobraNoUpdates = uicontrol('visible','off','Style', 'Radio', 'String', 'Initialize CobraToolbox Without Updates','pos', [10 5 400 15], 'parent',postOptTasksGroup);
     
     Okbtn = uicontrol('parent', d, 'Style', 'pushbutton', 'String', 'OK', 'pos',[445, 10, 75, 20], 'Callback', {@OK});
-    Cancelbtn = uicontrol('parent', d, 'Style', 'pushbutton', 'String', 'Cancel', 'pos',[520, 10, 75, 20], 'Callback', 'delete(gcf)');
+    Cancelbtn = uicontrol('parent', d, 'Style', 'pushbutton', 'String', 'Close', 'pos',[520, 10, 75, 20], 'Callback', 'delete(gcf)');
 end
 
 function Data_Selected(sender, event, textInput)
@@ -226,7 +230,8 @@ function Numeric_Validate(src,eventdata)
     end
 end
 
-function OK()
+function OK(~,~)
+    data = {};
     global trGroup
     global modelGroup
     global mediumGroup
@@ -241,84 +246,65 @@ function OK()
     global postOptTasksGroup
 
     %Supplied data files
-    trDataPath = trGroup.Children(2).String;
-    modelPath = modelGroup.Children(2).String;
-    mediumDataPath = mediumGroup.Children(2).String;
+    data.trDataPath = trGroup.Children(2).String;
+    data.modelPath = modelGroup.Children(2).String;
+    data.mediumDataPath = mediumGroup.Children(2).String;
     
     %Thresholding approach
-    globalT1 = thGroup.Children(3).Value;
-    localT1 = thGroup.Children(2).Value;
-    localT2 = thGroup.Children(1).Value; 
+    data.globalT1 = thGroup.Children(3).Value;
+    data.localT1 = thGroup.Children(2).Value;
+    data.localT2 = thGroup.Children(1).Value; 
     
     %Global threshold values
-    lowerGlobal = thValueSelectionGroup.Children(5).String;
-    upperGlobal = thValueSelectionGroup.Children(3).String;
-    exact = thValueSelectionGroup.Children(2).Value;
-    percentile = thValueSelectionGroup.Children(1).Value;
+    data.lowerGlobal = thValueSelectionGroup.Children(5).String;
+    data.upperGlobal = thValueSelectionGroup.Children(3).String;
+    data.exact = thValueSelectionGroup.Children(2).Value;
+    data.percentile = thValueSelectionGroup.Children(1).Value;
 
     %Gene mapping approach
-    gmMAX = gmGroup.Children(2).Value;
-    gmSUM = gmGroup.Children(1).Value;
+    data.gmMAX = gmGroup.Children(2).Value;
+    data.gmSUM = gmGroup.Children(1).Value;
 
     %Bound constraining options
-    constrIrreversible = boundConstrGroup.Children(2).Value;
-    constrAll = boundConstrGroup.Children(1).Value;
+    data.constrIrreversible = boundConstrGroup.Children(4).Value;
+    data.constrAll = boundConstrGroup.Children(3).Value;
+    
+    data.meetMinimumGrowthReq = boundConstrGroup.Children(1).Value;
+    data.growthNotAffectingGeneDel = boundConstrGroup.Children(2).Value;
     
     %Non-optimization tasks
-    filterHighlyLowlyExpressedGenes = nonOptTasksGroup.Children(7).Value;
-    filterLowlyExpressedGenes = nonOptTasksGroup.Children(6).Value;
-    ComparePhenotypeGenes = nonOptTasksGroup.Children(5).Value;
-    nonOptCompareSource = nonOptTasksGroup.Children(3).String(nonOptTasksGroup.Children(3).Value);
-    nonOptCompareTarget = nonOptTasksGroup.Children(1).String(nonOptTasksGroup.Children(1).Value);
+    data.filterHighlyLowlyExpressedGenes = nonOptTasksGroup.Children(7).Value;
+    data.filterLowlyExpressedGenes = nonOptTasksGroup.Children(6).Value;
+    data.ComparePhenotypeGenes = nonOptTasksGroup.Children(5).Value;
+    data.nonOptCompareSource = {};
+    if length(nonOptTasksGroup.Children(3).String()) > 0
+        data.nonOptCompareSource = nonOptTasksGroup.Children(3).String(nonOptTasksGroup.Children(3).Value);
+    end
+    data.nonOptCompareTarget = {};
+    if length(nonOptTasksGroup.Children(1).String())
+        data.nonOptCompareTarget = nonOptTasksGroup.Children(1).String(nonOptTasksGroup.Children(1).Value);
+    end
     
     %Post-optimization tasks
-    filterNonFluxReactions = postOptTasksGroup.Children(12).Value;
-    filterRateLimittingReactions = postOptTasksGroup.Children(11).Value;
-    calculateFluxShifts = postOptTasksGroup.Children(10).Value;
-    fluxShiftsSource = postOptTasksGroup.Children(8).String(postOptTasksGroup.Children(8).Value);
-    fluxShiftsTarget = postOptTasksGroup.Children(6).String(postOptTasksGroup.Children(6).Value);
+    data.useExistingModels = postOptTasksGroup.Children(14).Value;
+    data.filterNonFluxReactions = postOptTasksGroup.Children(13).Value;
+    data.filterRateLimittingReactions = postOptTasksGroup.Children(12).Value;
+    data.calculateFluxShifts = postOptTasksGroup.Children(11).Value;
+    data.fluxShiftsSource = {};
+    if length(postOptTasksGroup.Children(9).String()) > 0
+        data.fluxShiftsSource = postOptTasksGroup.Children(9).String(postOptTasksGroup.Children(9).Value);
+    end
+    data.fluxShiftsTarget = {};
+    if length(postOptTasksGroup.Children(7).String()) > 0
+        data.fluxShiftsTarget = postOptTasksGroup.Children(7).String(postOptTasksGroup.Children(7).Value);
+    end
     
-    objectiveFunction = postOptTasksGroup.Children(4).String;
-    excludeBiomassEquation = postOptTasksGroup.Children(3).Value;
+    data.objectiveFunction = postOptTasksGroup.Children(5).String;
+    data.excludeBiomassEquation = postOptTasksGroup.Children(4).Value;
+    data.biomassId = postOptTasksGroup.Children(3).Value;
     
-    initCobraNoUpdates = postOptTasksGroup.Children(1).Value;
-    initCobraWithUpdates = postOptTasksGroup.Children(2).Value;
+    data.initCobraNoUpdates = postOptTasksGroup.Children(1).Value;
+    data.initCobraWithUpdates = postOptTasksGroup.Children(2).Value;
     
-%     disp('trDataPath: '+string(trDataPath));
-%     disp('modelPath: '+string(modelPath));
-%     disp('mediumDataPath: '+string(mediumDataPath));
-%     
-%     disp('globalT1: '+string(globalT1));
-%     disp('localT1: '+string(localT1));
-%     disp('localT2: '+string(localT2));
-%     
-%     disp('lowerGlobal: '+string(lowerGlobal));
-%     disp('upperGlobal: '+string(upperGlobal));
-%     disp('exact: '+string(exact));
-%     disp('percentile: '+string(percentile));
-%     
-%     disp('gmMAX: '+string(gmMAX));
-%     disp('gmSUM: '+string(gmSUM));
-%     
-%     disp('constrIrreversible: '+string(constrIrreversible));
-%     disp('constrAll: '+string(constrAll));
-%     
-%     disp('filterHighlyLowlyExpressedGenes: '+string(filterHighlyLowlyExpressedGenes));
-%     disp('filterLowlyExpressedGenes: '+string(filterLowlyExpressedGenes));
-%     disp('ComparePhenotypeGenes: '+string(ComparePhenotypeGenes));
-%     disp('nonOptCompareSource: '+string(nonOptCompareSource));
-%     disp('nonOptCompareTarget: '+string(nonOptCompareTarget));
-%     
-%     disp('filterNonFluxReactions: '+string(filterNonFluxReactions));
-%     disp('filterRateLimittingReactions: '+string(filterRateLimittingReactions));
-%     disp('calculateFluxShifts: '+string(calculateFluxShifts));
-%     disp('fluxShiftsSource: '+string(fluxShiftsSource));
-%     disp('fluxShiftsTarget: '+string(fluxShiftsTarget));
-%     
-%     disp('objectiveFunction: '+string(objectiveFunction));
-%     disp('excludeBiomassEquation: '+string(excludeBiomassEquation));
-%     
-%     disp('initCobraNoUpdates: '+string(initCobraNoUpdates));
-%     disp('initCobraWithUpdates: '+string(initCobraWithUpdates));
-    
+    main(data);
 end
