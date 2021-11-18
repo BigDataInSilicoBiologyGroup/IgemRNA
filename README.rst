@@ -9,7 +9,7 @@ Furthermore, IgemRNA can be used to validate transcriptomics data facilitating i
 of biochemical networks, steady state assumptions, Gene - Protein - Reaction (GPR) relationship and can use optional medium composition data to create context-specific 
 models which can then be further analysed and compared to other phenotypes.
 
-.. image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/Supplementary%20Materials%202/Images/IgemRNAForm.png
+.. image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/IgemRNAForm.png
   :width: 500
 
 **********
