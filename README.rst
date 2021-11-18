@@ -1,5 +1,3 @@
-
-
 IgemRNA
 ---------
 *IgemRNA* is transcriptome analysis `MATLAB <https://se.mathworks.com/products/matlab.html?s_tid=hp_products_matlab>`_ software with a graphical user interface (GUI) designed   for the analysis of transcriptome data directly or the analysis of context-specific models generated from the provided model reconstruction, transciptome and optional medium     composition data files. *IgemRNA* facilitates some of the `Cobra Toolbox 3.0 <https://github.com/opencobra/cobratoolbox/>`_ constraint-based modelling functionalities for          context-specific model generation and performing optimisation methods like `FBA <https://opencobra.github.io/cobratoolbox/latest/modules/analysis/FBA/index.html>`_ 
@@ -9,8 +7,7 @@ of biochemical networks, steady state assumptions and Gene-Protein-Reaction (GPR
 
 .. image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/IgemRNAForm.png
   :width: 550
-  :align: center
-fig. 1 - Full IgemRNA form
+**fig. 1** - Full IgemRNA form
 
 Folder structure description
 **********
@@ -33,8 +30,7 @@ Transcriptomics data and medium composition data can be provided in *.xls* or *.
 
 .. image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/inputDataFormat.png
   :width: 500
-  :align: center
-fig. 2 - Input data file structure; A - Medium data file structure; B - Transcriptomics data file structure
+**fig. 2** - Input data file structure; A - Medium data file structure; B - Transcriptomics data file structure
 
 Data files used for this tutorial can be found in the `Data <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/tree/main/Data>`_ folder:
 
@@ -55,18 +51,20 @@ The results of each task are stored in a different folder within the *Results no
 
 .. image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/nonOptTasksFolderStructure.png
   :width: 400
-  :align: center
-fig. 3 - *Non-optimization results* folder
+**fig. 3** - *Non-optimization results* folder
 
 **********
-Filter highly and lowly expressed genes
+1. Filter highly and lowly expressed genes
 **********
-Non-optimization task *Filter highly and lowly expressed genes* generates result *Excel* files for each provided transcriptomics dataset. File names are assigned based on the provided dataset and phenotype name (from transcriptomics data), the applied thresholding approach (*GT1, LT1, LT2*) and provided global thresholds values (see fig. 4).
+Non-optimization task *Filter highly and lowly expressed genes* generates result *Excel* files for each provided transcriptomics dataset. File names are assigned based on the provided dataset and phenotype names (from transcriptomics data), the applied thresholding approach (*GT1, LT1, LT2* **TODO: add additional information about thresholds**) and provided global thresholds values (see fig. 4). Each result *Excel* file contains one sheet with the list of genes provided by transcriptomics data and 4 columns: *GeneId*, *Data* (the expression value), *ExpressionLevel* and *ThApplied*. The *ExpressionLevel* column contains the expression levels determined based on the selected thresholding approach, provided global and for thresholding approaches *LT1* and *LT2* calculated local thresholds. Column *ThApplied* displays whether a local or a global threshold for a specific gene was applied (see fig. 5). 
 
-.. image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterHighlyLowlyExpressedGenesFolder.PNG
-  :width: 400
-  :align: center
-fig. 4 - *Filter highly and lowly expressed genes* folder
+.. |pic1| image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterHighlyLowlyExpressedGenesFolder.PNG
+   :width: 440
 
-Each excel file contains one sheet with the list of genes provided by transcriptomics data and 4 columns: *GeneId*, *Data* (the expression value), *ExpressionLevel* and *ThApplied*. The *ExpressionLevel* column contains the expression levels determined based on the chosen thresholding approach, provided global and for thresholding approaches (LT1 and LT2) calculated local thresholds. Column *ThApplied* displays whether a local or a global threshold for a specific gene was applied (see fig. 5). 
+.. |pic2| image::  https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterHighlyLowlyExpressedGenesFile.PNG
+   :width: 250
+
+|pic1|    |pic2|
+
+**fig. 4** - *Filter highly and lowly expressed genes* folder;    **fig. 5** - Filter highly and lowly expressed genes result file
 
