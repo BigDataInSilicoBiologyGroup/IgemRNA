@@ -1,13 +1,11 @@
 **********
 IgemRNA
 **********
-IgemRNA is a library with a graphical user interface written for the MATLAB environment that facilitates some of the `Cobra Toolbox 3.0 <https://github.com/opencobra/cobratoolbox/>`_ 
-functionality. 
-IgemRNA supports the analysis of transcriptome data directly or to apply GSM biochemical network topology properties and perform optimisation methods like `FBA <https://opencobra.github.io/cobratoolbox/latest/modules/analysis/FBA/index.html>`_ 
-or `FVA <https://opencobra.github.io/cobratoolbox/stable/modules/analysis/FVA/index.html>`_ and analyse their results. 
-Furthermore, IgemRNA can be used to validate transcriptomics data facilitating interconnectivity 
-of biochemical networks, steady state assumptions, Gene - Protein - Reaction (GPR) relationship and can use optional medium composition data to create context-specific 
-models which can then be further analysed and compared to other phenotypes.
+IgemRNA is transcriptome analysis `MATLAB <https://se.mathworks.com/products/matlab.html?s_tid=hp_products_matlab>`_ software with a graphical user interface (GUI) designed for the analysis of transcriptome data directly or the analysis of context-specific models generated from the provided model reconstruction, transciptome and optional medium composition data files. IgemRNA facilitates some of the `Cobra Toolbox 3.0 <https://github.com/opencobra/cobratoolbox/>`_ constraint-based modelling functionalities for context-specific model generation and performing optimisation methods like `FBA <https://opencobra.github.io/cobratoolbox/latest/modules/analysis/FBA/index.html>`_ 
+or `FVA <https://opencobra.github.io/cobratoolbox/stable/modules/analysis/FVA/index.html>`_ on them.
+Furthermore, IgemRNA can be used to validate transcriptomics data taking into account the interconnectivity 
+of biochemical networks, steady state assumptions and Gene - Protein - Reaction (GPR) relationship. The result context-specific models can then be further analysed and compared to other phenotypes.
+
 
 .. image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/IgemRNAForm.png
   :width: 500
