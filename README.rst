@@ -68,3 +68,14 @@ Non-optimization task *Filter highly and lowly expressed genes* generates result
 
 **fig. 4** - *Filter highly and lowly expressed genes* folder;    **fig. 5** - Filter highly and lowly expressed genes result file
 
+There are two ways to perform this test case:
+
+**1. Using GUI** - upload transciptomics data file, select a thresholding approach, input threshold value/s, select non-optimization tasks option *filter highly and lowly expressed genes* and press *OK*.
+
+**2. Run test case files** from the *Scripts* folder of *IgemRNA* tool:
+
+* `TestCase_findHighlyLowlyExpressedGenesGT1.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/Scripts/TestCase_findHighlyLowlyExpressedGenesGT1.m>`_;
+* `TestCase_findHighlyLowlyExpressedGenesLT1.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/Scripts/TestCase_findHighlyLowlyExpressedGenesLT1.m>`_;
+* `TestCase_findHighlyLowlyExpressedGenesLT2.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/Scripts/TestCase_findHighlyLowlyExpressedGenesLT2.m>`_.
+
+
