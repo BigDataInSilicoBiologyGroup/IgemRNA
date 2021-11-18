@@ -15,9 +15,9 @@ fig. 1 - Full IgemRNA form
 **********
 Folder structure description
 **********
-The *IgemRNA* tool initially consists of 2 root folders (*Data, Scripts*), additional result folders are added after specific tasks have been performed (*Results non-optimization, Results post-optimization*)   
-and an *IgemRNA.m* file which calls the user graphical interface form. 
-Data files used for this tutorial can be found in the *Data* folder:
+The *IgemRNA* tool initially consists of 2 root folders (`Data <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/tree/main/Data>`_, `Scripts <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/tree/main/Scripts>`_), additional result folders are created when specific analysis tasks have been performed (*Results non-optimization, Results post-optimization*)   
+and an `IgemRNA.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/IgemRNA.m>`_ file which calls the user graphical interface form. 
+Data files used for this tutorial can be found in the `Data <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/tree/main/Data>`_ folder:
 
 * `MediumData.xlsx <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA_v4/blob/main/Data/MediumData.xlsx>`_ (medium composition data)
 * `Yeast_8_4_0.xls <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA_v4/blob/main/Data/Yeast_8_4_0.xls>`_ (the yeast consensus genome-scale model reconstruction)  
@@ -25,6 +25,12 @@ Data files used for this tutorial can be found in the *Data* folder:
 
 *Scripts* folder consists of all the script files that are being executed by the *IgemRNA* software according user selected options in the *IgemRNA* form as well as the test cases provided in this demonstration.
 The *Results non-optimization* (results of direct transcriptome analysis) and *Results post-optimization* (results of context-specific model analysis) folders are where all the result files are saved. 
+
+**********
+Running IgemRNA software
+**********
+In order to run *IgemRNA* the user must first have the `MATLAB <https://se.mathworks.com/products/matlab.html?s_tid=hp_products_matlab>`_ environment installed and started as well as have the `IgemRNA <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA>`_ software downloaded and the files extracted. Then the user can navigate to the root folder of *IgemRNA* in *MATLAB* where the `IgemRNA.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/IgemRNA.m>`_ file is located and run it. 
+
 
 **********
 File upload
