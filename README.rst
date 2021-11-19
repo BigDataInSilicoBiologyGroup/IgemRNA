@@ -92,7 +92,7 @@ Non-optimization task *Filter lowly expressed genes* generates separate *Excel* 
    :width: 400
 
 .. |pic4| image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterLowlyExpressedGenesFile.PNG
-   :width: 400
+   :width: 300
     
      
 .. list-table::
