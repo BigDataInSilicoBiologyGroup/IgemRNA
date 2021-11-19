@@ -26,7 +26,7 @@ Input data files
 **********
 To access all options in the *IgemRNA* form, the user must supply input data files. This can be done by pressing the *Open* button in the corresponding file upload row and selecting the files via *File Explorer*. **Transcriptomics data file** (see fig. 2B) is required to run *non-optimization tasks* but an additional **model reconstruction file** is required to access the *post-optimization tasks*. **Medium composition data file** (see fig. 2A) is optional, the selection of this data file does not extend the form, but specifies the provided exchange reaction constraints (upper and lower bounds) in the model for *post-optimization tasks* analysis.
 
-Transcriptomics data and medium composition data can be provided in *.xls* or *.xlsx* formats, where columns are named respectively (see fig. 2) and sheet names correspond to dataset and phenotype names (*dataSetName_phenotypeName*). The model reconstruction file can be provided in *.xls*, *.xml* or other formats supported by *Cobra Toolbox 3.0.* 
+Transcriptomics data and medium composition data can be provided in *.xls* or *.xlsx* formats, where columns are named respectively (see fig. 2) and sheet names correspond to dataset and phenotype names (*dataSetName_phenotypeName*). The model reconstruction file can be provided in *.xls*, *.xml* or other formats supported by *Cobra Toolbox 3.0.* **In case the transcriptomics data consists of multiple datasets, the genes listed in each dataset must be in the same order!**
 
 .. image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/inputDataFormat.png
   :width: 500
@@ -56,7 +56,7 @@ The results of each task are stored in a different folder within the *Results no
 **********
 1. Filter highly and lowly expressed genes
 **********
-Non-optimization task *Filter highly and lowly expressed genes* generates result *Excel* files for each provided transcriptomics dataset. File names are assigned based on the provided dataset and phenotype names (from transcriptomics data), the applied thresholding approach (*GT1, LT1, LT2* **TODO: add additional information about thresholds**) and provided global thresholds values (see fig. 4). Each result *Excel* file contains one sheet with the list of genes provided by transcriptomics data and 4 columns: *GeneId*, *Data* (the expression value), *ExpressionLevel* and *ThApplied*. The *ExpressionLevel* column contains the expression levels determined based on the selected thresholding approach, provided global and for thresholding approaches *LT1* and *LT2* calculated local thresholds. Column *ThApplied* displays whether a local or a global threshold for a specific gene was applied (see fig. 5). 
+Non-optimization task *Filter highly and lowly expressed genes* generates result *Excel* files for each provided transcriptomics dataset. File names are assigned based on the provided dataset and phenotype names (from transcriptomics data), the applied thresholding approach (*GT1, LT1, LT2* **TODO: add additional information about thresholds**) and provided global thresholds values (see fig. 4). Each result *Excel* file contains one sheet with the list of genes provided by transcriptomics data and 4 columns: *GeneId*, *Data* (expression value), *ExpressionLevel* and *ThApplied*. The *ExpressionLevel* column contains the expression levels determined based on the selected thresholding approach, provided global and for thresholding approaches *LT1* and *LT2* calculated local thresholds. Column *ThApplied* displays whether a local or a global threshold for a specific gene was applied (see fig. 5). 
 
 .. |pic1| image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterHighlyLowlyExpressedGenesFolder.PNG
    :width: 440
@@ -64,9 +64,14 @@ Non-optimization task *Filter highly and lowly expressed genes* generates result
 .. |pic2| image::  https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterHighlyLowlyExpressedGenesFile.PNG
    :width: 250
 
-|pic1|    |pic2|
+.. list-table::
+   :widths: 200 200
+   
+   * - |pic1|
+     - |pic2|
 
-**fig. 4** - *Filter highly and lowly expressed genes* folder;    **fig. 5** - Filter highly and lowly expressed genes result file
+   * - **fig. 4** - *Filter highly and lowly expressed genes* folder
+     - **fig. 5** - *Filter highly and lowly expressed genes* result file
 
 There are two ways to perform this test case:
 
@@ -81,12 +86,67 @@ There are two ways to perform this test case:
 **********
 2. Filter lowly expressed genes 
 **********
-Non-optimization task *Filter lowly expressed genes* generates separate *Excel* result files for each dataset provided in transcriptomics data file. These result files contain filtered gene lists including genes with expression value below the given threshold value/s based on the selected thresholding approach. File names include dataset and phenotype names (from transcriptomics data file), the applied thresholding approach (*GT1, LT1, LT2*) and provided global threshold value/s (see fig. 6). 
+Non-optimization task *Filter lowly expressed genes* generates separate *Excel* result files for each dataset provided in transcriptomics data file. These result files contain filtered gene lists including genes with expression value below the given threshold value/s based on the selected thresholding approach. File names include dataset and phenotype names (from transcriptomics data file), the applied thresholding approach (*GT1, LT1, LT2*) and provided global threshold value/s (see fig. 6). Each result file consists of 4 columns *GeneId*, *Data* (expression value), *ExpressionLevel* (in this case, only *Low*) and *ThApplied* to show whether a global or a local threshold was applied for a specific gene. Only those genes with expression values below the given threshold (depending on which thresholding approach is applied) are listed in the result files (see fig. 7).
 
 .. |pic3| image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterLowlyExpressedGenesFolder.png
-   :width: 460
+   :width: 440
 
 .. |pic4| image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterLowlyExpressedGenesFile.PNG
-   :width: 230
+   :width: 240
+    
+     
+.. list-table::
+   :widths: 200 200
+   
+   * - |pic3|
+     - |pic4|
 
-|pic3|    |pic4|
+   * - **fig. 6** - *Filter lowly expressed genes* folder
+     - **fig. 7** - *Filter lowly expressed genes* result file
+     
+     
+There are two ways to perform this test case:
+
+**1. Using GUI** - upload transciptomics data file, select a thresholding approach, input threshold value/s, select non-optimization tasks option *Filter lowly expressed genes* and press *OK*.
+
+**2. Run test case files** from the *Scripts* folder of *IgemRNA* tool:
+
+* `TestCase_findGenesBelowThresholdGT1.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/Scripts/TestCase_findGenesBelowThresholdGT1.m>`_;
+* `TestCase_findGenesBelowThresholdLocal1.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/Scripts/TestCase_findGenesBelowThresholdLocal1.m>`_;
+* `TestCase_findGenesBelowThresholdLocal2.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/Scripts/TestCase_findGenesBelowThresholdLocal2.m>`_.
+
+**********
+3. Filter up/down regulated genes between phenotypes
+**********
+Non-optimization task *Filter up/down regulated genes between phenotypes* generates result *Excel* files in the *Gene expression level comparison* folder. Result file name contains dataset and phenotype names for both transcriptomics datasets that have been compared (see fig. 8). Result *Excel* data files contain a full gene list from the target dataset, expression values for both target and source datasets as well as the determined *up/down* regulation status (see fig. 9). 
+
+.. |pic5| image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterUpDownRegulatedGenesBetweenPhenotypesFolder.png
+   :width: 440
+
+.. |pic6| image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterUpDownRegulatedGenesBetweenPhenotypesFile.png
+   :width: 500
+    
+     
+.. list-table::
+   :widths: 200 200
+   
+   * - |pic5|
+     - |pic6|
+
+   * - **fig. 8** - *Filter up/down regulated genes between phenotypes* folder
+     - **fig. 9** - *Filter up/down regulated genes between phenotypes* result file
+     
+There are two ways to perform this test case:
+
+**1. Using GUI** - upload transciptomics data file with multiple datasets, select a thresholding approach, input threshold value/s, select non-optimization tasks option *Filter up/down regulated genes between phenotypes*, choose phenotypes to compare, and press *OK*.
+
+**2. Run test case file** from the *Scripts* folder of *IgemRNA* tool: `TestCase_findUpDownRegulatedGenes.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/Scripts/TestCase_findUpDownRegulatedGenes.m>`_.
+
+Post-optimization tasks
+**********
+Context-specific models generated by *IgemRNA* post-optimization tasks as well as the results of the analysis performed on these models are saved in the *Results post-optimization* folder (see fig. 10). The results of post-optimization tasks are saved in folders with corresponding names: *Flux-shifts*, *Non-flux reactions* and *Rate limiting reactions* (**for more details see ...**). 
+
+.. |pic7| image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/postOptTasksFolder.PNG
+   :width: 440
+
+
