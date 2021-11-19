@@ -70,7 +70,7 @@ Non-optimization task *Filter highly and lowly expressed genes* generates result
 
 There are two ways to perform this test case:
 
-**1. Using GUI** - upload transciptomics data file, select a thresholding approach, input threshold value/s, select non-optimization tasks option *filter highly and lowly expressed genes* and press *OK*.
+**1. Using GUI** - upload transciptomics data file, select a thresholding approach, input threshold value/s, select non-optimization tasks option *Filter highly and lowly expressed genes* and press *OK*.
 
 **2. Run test case files** from the *Scripts* folder of *IgemRNA* tool:
 
@@ -78,4 +78,15 @@ There are two ways to perform this test case:
 * `TestCase_findHighlyLowlyExpressedGenesLT1.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/Scripts/TestCase_findHighlyLowlyExpressedGenesLT1.m>`_;
 * `TestCase_findHighlyLowlyExpressedGenesLT2.m <https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/Scripts/TestCase_findHighlyLowlyExpressedGenesLT2.m>`_.
 
+**********
+2. Filter lowly expressed genes 
+**********
+Non-optimization task *Filter lowly expressed genes* generates separate *Excel* result files for each dataset provided in transcriptomics data file. These result files contain filtered gene lists including genes with expression value below the given threshold value/s based on the selected thresholding approach. File names include dataset and phenotype names (from transcriptomics data file), the applied thresholding approach (*GT1, LT1, LT2*) and provided global threshold value/s (see fig. 6). 
 
+.. |pic3| image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterLowlyExpressedGenesFolder.png
+   :width: 460
+
+.. |pic4| image:: https://github.com/BigDataInSilicoBiologyGroup/IgemRNA/blob/main/img/filterLowlyExpressedGenesFile.PNG
+   :width: 230
+
+|pic3|    |pic4|
