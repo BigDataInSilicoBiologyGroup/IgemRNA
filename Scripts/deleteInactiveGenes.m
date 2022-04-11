@@ -1,5 +1,9 @@
-function model = deleteInactiveGenes(model, trData, trDataPath, thApproach, lowerTh, upperTh, sheetIndex, growthNotAffectingGeneDel)      
-
+function model = deleteInactiveGenes(model, trData, trDataPath, thApproach, lowerTh, upperTh, sheetIndex, growthNotAffectingGeneDel, percentile)      
+    % Calculate percentile
+    if percentile == 1        
+        lowerTh = calculatePercentile(trData.Data, lowerTh);
+        upperTh = calculatePercentile(trData.Data, upperTh);
+    end
     inactiveGenes = {};
     if thApproach == 1
         inactiveGenes = findGenesBelowThresholdGT1(lowerTh, trData.Geneid, trData.Data);
@@ -18,6 +22,7 @@ function model = deleteInactiveGenes(model, trData, trDataPath, thApproach, lowe
                 if growthNotAffectingGeneDel == 1
                     % Test is gene deletions affects growth
                     [grRatio, grRateKO, grRateWT, hasEffect, delRxns] = singleGeneDeletion(model, 'FBA', inactiveGenes(j));
+                    disp(inactiveGenes(j));
                     if grRatio == 1
                         genes_to_delete{counter} = inactiveGenes{j};
                         counter = counter + 1;

@@ -6,17 +6,20 @@ function calculateMinimumRequirements(modelPath, trDataPath, mediumDataPath, gro
         model = modelOriginal;
         trData=readtable(trDataPath,'Sheet',trSheets{i}); 
         % Calculate percentile
-        if percentile == 1        
-            lowerTh = calculatePercentile(trData.Data, lowerTh); % TEST
-            upperTh = calculatePercentile(trData.Data, upperTh);
+        if percentile == 1      
+            lowerThreshold = calculatePercentile(trData.Data, lowerTh);
+            upperThreshold = calculatePercentile(trData.Data, upperTh);
+        else
+            lowerThreshold = lowerTh;
+            upperThreshold = upperTh;
         end
         inactiveGenes = {};
         if thApproach == 1
-            inactiveGenes = findGenesBelowThresholdGT1(lowerTh, trData.Geneid, trData.Data);
+            inactiveGenes = findGenesBelowThresholdGT1(lowerThreshold, trData.Geneid, trData.Data);
         elseif thApproach == 2
-            inactiveGenes = findGenesBelowThresholdLocal1(lowerTh,trDataPath,i);
+            inactiveGenes = findGenesBelowThresholdLocal1(lowerThreshold,trDataPath,i);
         else
-            inactiveGenes = findGenesBelowThresholdLocal2(lowerTh, upperTh, trDataPath,i);
+            inactiveGenes = findGenesBelowThresholdLocal2(lowerThreshold, upperThreshold, trDataPath,i);
         end
 
         % Non expressed genes
@@ -29,6 +32,7 @@ function calculateMinimumRequirements(modelPath, trDataPath, mediumDataPath, gro
                         try
                             % Test is gene deletions affects growth
                             [grRatio, grRateKO, grRateWT, hasEffect, delRxns] = singleGeneDeletion(model, 'FBA', inactiveGenes(j));
+                            disp(inactiveGenes(j));
                             if grRatio == 1
                                 genes_to_delete{counter} = inactiveGenes{j};
                                 counter = counter + 1;

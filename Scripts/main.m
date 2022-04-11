@@ -1,94 +1,123 @@
 function main(inputData)
 
+    % VARIABLES FOR INPUT PARAMS
+    thresholdingApproach = 1;
+    lowerGlobalThresholdVal = 0;
+    upperGlobalThresholdVal = 0;
+    trSheets = [];
+    gmAndOperation = 'MIN';
+    gmOrOperation = 'MAX';
+
+    % RESULT HEADERS
+    nonOptFilterLowlyHeaders1 = {'GeneId', 'Data', 'ExpressionLevel'};
+    nonOptFilterLowlyHeaders2 = {'GeneId', 'Data', 'ExpressionLevel', 'ThApplied'};
+    
+    % TIMESTAMP
     t = datetime('now');
     strt = datestr(t);
     d = strrep(strt,':','-');
     
-    thresholdingApproach = 1;
+    % PREPARING INPUT PARAMS
+    % (param) thresholdingApproach
     if inputData.localT1 == 1
         thresholdingApproach = 2;
     elseif inputData.localT2 == 1
         thresholdingApproach = 3;
     end
+    % (param) lowerGlobalThresholdVal
+    lowerGlobalThresholdVal = str2num(inputData.lowerGlobal);
+    % (param) upperGlobalThresholdVal
+    upperGlobalThresholdVal = str2num(inputData.upperGlobal);
+    % (params) gene mapping AND/OR operators
+    if inputData.gmGmSum == 1
+        gmAndOperation = 'GM';
+        gmOrOperation = 'SUM';
+    elseif inputData.gmGmMax == 1
+        gmAndOperation = 'GM';
+    elseif inputData.gmMinSum == 1
+        gmOrOperation = 'SUM';
+    end
+    % (params) boolean arrays for selected analysis tasks
+    nonOptTasksBool = [inputData.filterHighlyLowlyExpressedGenes inputData.filterLowlyExpressedGenes inputData.ComparePhenotypeGenes];
+    postOptTasksBool = [inputData.filterNonFluxReactions inputData.filterRateLimittingReactions inputData.calculateFluxShifts];
     
-    LowerGlobalThresholdVal = str2num(inputData.lowerGlobal);
-    UpperGlobalThresholdVal = str2num(inputData.upperGlobal);
     
-    nonOptTasks = [inputData.filterHighlyLowlyExpressedGenes inputData.filterLowlyExpressedGenes inputData.ComparePhenotypeGenes];
-    postOptTasks = [inputData.filterNonFluxReactions inputData.filterRateLimittingReactions inputData.calculateFluxShifts];
-    
-    % Non-opt tasks
-    if any(nonOptTasks(:) == 1)   
-        % Get transcriptomics data sheet names
+    % NON-OPT TASKS START (transcriptome analysis)
+    if any(nonOptTasksBool(:) == 1)   
+        
+        % Get transcriptomics dataset sheet (phenotype) names
         trSheets = sheetnames(inputData.trDataPath);
         
-        % Process all phenotypes
+        % Processing one sheet (phenotype) at a time
         if inputData.filterHighlyLowlyExpressedGenes == 1 || inputData.filterLowlyExpressedGenes == 1
+            
             for i=1:1:height(trSheets) 
+                % read a transcriptome dataset
+                trData=readtable(inputData.trDataPath,'Sheet',trSheets{i});
                 
-                trData=readtable(inputData.trDataPath,'Sheet',trSheets{i});    
-                
-                % Calculate percentile
+                % percentile calculation (if selected)
                 if inputData.percentile == 1        
-                    LowerGlobalThresholdVal = calculatePercentile(trData.Data, inputData.lowerGlobal);
-                    UpperGlobalThresholdVal = calculatePercentile(trData.Data, inputData.upperGlobal);
+                    lowerGlobalThresholdVal = calculatePercentile(trData.Data, str2double(inputData.lowerGlobal));
+                    upperGlobalThresholdVal = calculatePercentile(trData.Data, str2double(inputData.upperGlobal));
                 end
                 
-                if inputData.globalT1 == 1 % No local rules
+                % 1. GT1 (Global T1, no local rules)
+                if inputData.globalT1 == 1 % 
+         
                     % filterLowlyExpressedGenes GT1
                     if inputData.filterLowlyExpressedGenes == 1
-                        lowlyExpressedGenes = findGenesBelowThresholdGT1(LowerGlobalThresholdVal, trData.Geneid, trData.Data);
+                        lowlyExpressedGenes = findGenesBelowThresholdGT1(lowerGlobalThresholdVal, trData.Geneid, trData.Data);
                         folderName = strcat('Results non-optimization/Lowly expressed genes/',d,'/');
-                        excelFileName = strcat(trSheets{i}, '_GT1_', string(LowerGlobalThresholdVal), '.xls');
-                        saveResults(folderName, excelFileName, lowlyExpressedGenes);
+                        excelFileName = strcat(trSheets{i}, '_GT1_', string(lowerGlobalThresholdVal), '.xls');
+                        saveResultTable(folderName, excelFileName, lowlyExpressedGenes, nonOptFilterLowlyHeaders1);
                     end
                     
                     % filterHighlyLowlyExpressedGenes GT1
                     if inputData.filterHighlyLowlyExpressedGenes == 1
-                        geneExpressionLevels = findHighlyLowlyExpressedGenesGT1(LowerGlobalThresholdVal, trData.Geneid, trData.Data);
+                        geneExpressionLevels = findHighlyLowlyExpressedGenesGT1(lowerGlobalThresholdVal, trData.Geneid, trData.Data);
                         folderName = strcat('Results non-optimization/Highly-lowly expressed genes/',d,'/');
-                        excelFileName = strcat(trSheets{i}, '_GT1_', string(LowerGlobalThresholdVal), '.xls');
-                        saveResults(folderName, excelFileName, geneExpressionLevels);
+                        excelFileName = strcat(trSheets{i}, '_GT1_', string(lowerGlobalThresholdVal), '.xls');
+                        saveResultTable(folderName, excelFileName, geneExpressionLevels, nonOptFilterLowlyHeaders1);
                     end
                     
                 elseif inputData.localT1 == 1 % Must apply local rules (multiple tr datasets)
                     % filterLowlyExpressedGenes LT1
                     if inputData.filterLowlyExpressedGenes == 1
-                        lowlyExpressedGenes = findGenesBelowThresholdLocal1(LowerGlobalThresholdVal, inputData.trDataPath, i);
+                        lowlyExpressedGenes = findGenesBelowThresholdLocal1(lowerGlobalThresholdVal, inputData.trDataPath, i);
                         folderName = strcat('Results non-optimization/Lowly expressed genes/',d,'/');
-                        excelFileName = strcat(trSheets{i}, '_LT1_', string(LowerGlobalThresholdVal), '.xls');
-                        saveResults(folderName, excelFileName, lowlyExpressedGenes);
+                        excelFileName = strcat(trSheets{i}, '_LT1_', string(lowerGlobalThresholdVal), '.xls');
+                        saveResultTable(folderName, excelFileName, lowlyExpressedGenes, nonOptFilterLowlyHeaders2);
                     end
                     
                     % filterHighlyLowlyExpressedGenes LT1
                     if inputData.filterHighlyLowlyExpressedGenes == 1
-                        geneExpressionLevels = findHighlyLowlyExpressedGenesLT1(LowerGlobalThresholdVal, inputData.trDataPath, i);
+                        geneExpressionLevels = findHighlyLowlyExpressedGenesLT1(lowerGlobalThresholdVal, inputData.trDataPath, i);
                         folderName = strcat('Results non-optimization/Highly-lowly expressed genes/',d,'/');
-                        excelFileName = strcat(trSheets{i}, '_LT1_', string(LowerGlobalThresholdVal), '.xls');
-                        saveResults(folderName, excelFileName, geneExpressionLevels);
+                        excelFileName = strcat(trSheets{i}, '_LT1_', string(lowerGlobalThresholdVal), '.xls');
+                        saveResultTable(folderName, excelFileName, geneExpressionLevels, nonOptFilterLowlyHeaders2);
                     end
 
                 else % inputData.localT2 == 1
-                    % filterLowlyExpressedGenes LT1
+                    % filterLowlyExpressedGenes LT2
                     if inputData.filterLowlyExpressedGenes == 1
-                        lowlyExpressedGenes = findGenesBelowThresholdLocal2(LowerGlobalThresholdVal, UpperGlobalThresholdVal, inputData.trDataPath, i);
+                        lowlyExpressedGenes = findGenesBelowThresholdLocal2(lowerGlobalThresholdVal, upperGlobalThresholdVal, inputData.trDataPath, i);
                         folderName = strcat('Results non-optimization/Lowly expressed genes/',d,'/');
-                        excelFileName = strcat(trSheets{i}, '_LT2_', string(LowerGlobalThresholdVal), '_', string(UpperGlobalThresholdVal), '.xls');
-                        saveResults(folderName, excelFileName, lowlyExpressedGenes);
+                        excelFileName = strcat(trSheets{i}, '_LT2_', string(lowerGlobalThresholdVal), '_', string(upperGlobalThresholdVal), '.xls');
+                        saveResultTable(folderName, excelFileName, lowlyExpressedGenes, nonOptFilterLowlyHeaders2);
                     end
                     
-                    % filterHighlyLowlyExpressedGenes LT1
+                    % filterHighlyLowlyExpressedGenes LT2
                     if inputData.filterHighlyLowlyExpressedGenes == 1
-                        geneExpressionLevels = findHighlyLowlyExpressedGenesLT2(LowerGlobalThresholdVal, UpperGlobalThresholdVal, inputData.trDataPath, i);
+                        geneExpressionLevels = findHighlyLowlyExpressedGenesLT2(lowerGlobalThresholdVal, upperGlobalThresholdVal, inputData.trDataPath, i);
                         folderName = strcat('Results non-optimization/Highly-lowly expressed genes/',d,'/');
-                        excelFileName = strcat(trSheets{i}, '_LT2_', string(LowerGlobalThresholdVal), '_', string(UpperGlobalThresholdVal), '.xls');
-                        saveResults(folderName, excelFileName, geneExpressionLevels);
+                        excelFileName = strcat(trSheets{i}, '_LT2_', string(lowerGlobalThresholdVal), '_', string(upperGlobalThresholdVal), '.xls');
+                        saveResultTable(folderName, excelFileName, geneExpressionLevels, nonOptFilterLowlyHeaders2);
                     end
                 end
             end
         end        
 
-        % Process selected phenotypes (or one to all)
+        % Compare multiple sheets (phenotypes) at a time 
         if inputData.ComparePhenotypeGenes == 1
             % ComparePhenotypeGenes
             if string(inputData.nonOptCompareTarget) == "All"
@@ -98,20 +127,20 @@ function main(inputData)
                         result = findUpDownRegulatedGenes(inputData.nonOptCompareSource, trSheets{j}, inputData.trDataPath);
                         folderName = strcat('Results non-optimization/Gene expression level comparison/',d,'/');
                         excelFileName = strcat(inputData.nonOptCompareSource, '_compared_to_', trSheets{j}, '.xls');
-                        saveResults(folderName, excelFileName, result);
+                        saveResultTable(folderName, excelFileName, result, {'GeneId',strcat(inputData.nonOptCompareSource,'_Data(target)'),strcat(trSheets{j},'_Data(source)'),'Up/Down regulated'});
                     end
                 end
             else
                 result = findUpDownRegulatedGenes(inputData.nonOptCompareSource, inputData.nonOptCompareTarget, inputData.trDataPath);
                 folderName = strcat('Results non-optimization/Gene expression level comparison/',d,'/');
                 excelFileName = strcat(inputData.nonOptCompareSource, '_compared_to_', inputData.nonOptCompareTarget, '.xls');
-                saveResults(folderName, excelFileName, result);
+                saveResultTable(folderName, excelFileName, result, {'GeneId',strcat(inputData.nonOptCompareSource,'_Data(target)'),strcat(trSheets{j},'_Data(source)'),'Up/Down regulated'});
             end
         end
     end
 
     % Post-opt tasks
-    if any(postOptTasks(:) == 1)
+    if any(postOptTasksBool(:) == 1)
         
         % Start CobraToolbox
         if inputData.initCobraNoUpdates == 1
@@ -122,12 +151,12 @@ function main(inputData)
         
         % Calculate minimum requirements for transcriptomics validation
         if inputData.meetMinimumGrowthReq == 1
-            calculateMinimumRequirements(inputData.modelPath,inputData.trDataPath,inputData.mediumDataPath,inputData.growthNotAffectingGeneDel, thresholdingApproach, LowerGlobalThresholdVal, UpperGlobalThresholdVal, inputData.objectiveFunction, inputData.percentile);
+            calculateMinimumRequirements(inputData.modelPath,inputData.trDataPath,inputData.mediumDataPath,inputData.growthNotAffectingGeneDel, thresholdingApproach, lowerGlobalThresholdVal, upperGlobalThresholdVal, inputData.objectiveFunction, inputData.percentile);
         end
         
         % Integrate transcriptomics in the model
         if inputData.useExistingModels ~= 1
-            createContextSpecificModel(inputData.modelPath,inputData.trDataPath,inputData.mediumDataPath,inputData.growthNotAffectingGeneDel, inputData.meetMinimumGrowthReq, thresholdingApproach, LowerGlobalThresholdVal, UpperGlobalThresholdVal, inputData.objectiveFunction, inputData.gmMAX, inputData.constrAll, inputData.excludeBiomassEquation, inputData.biomassId);
+            createContextSpecificModel(inputData.modelPath,inputData.trDataPath,inputData.mediumDataPath,inputData.growthNotAffectingGeneDel, inputData.meetMinimumGrowthReq, thresholdingApproach, lowerGlobalThresholdVal, upperGlobalThresholdVal, inputData.objectiveFunction, gmAndOperation, gmOrOperation, inputData.constrAll, inputData.excludeBiomassEquation, inputData.biomassId, inputData.percentile);
         end
         
         if inputData.filterNonFluxReactions == 1

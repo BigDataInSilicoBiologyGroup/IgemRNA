@@ -1,11 +1,10 @@
-function model = createContextSpecificModel(modelPath, trDataPath, mediumDataPath, growthNotAffectingGeneDel, meetMinimumReq, thApproach, lowerTh, upperTh, objective, gmMAX, constrAll, excludeBiomassEq, biomassId)
+function model = createContextSpecificModel(modelPath, trDataPath, mediumDataPath, growthNotAffectingGeneDel, meetMinimumReq, thApproach, lowerTh, upperTh, objective, gmAndOperation, gmOrOperation, constrAll, excludeBiomassEq, biomassId, percentile)
     % model - ...
     % geneNames - ...
     % ExpressionValues - ...
     % geneMapping - 1 for AND/OR=MIN/MAX; 2 for AND/OR=MIN/SUM
     % constrAll - true for constrain all reactions; 2 for constrain only
-    % irreversible reactions
-    
+    % irreversible reactions   
     
     trSheets = sheetnames(trDataPath);
     modelOriginal=readCbModel(modelPath);
@@ -25,7 +24,7 @@ function model = createContextSpecificModel(modelPath, trDataPath, mediumDataPat
             try
                 minRequirements = readtable(strcat('Results post-optimization/Minimum requirements/',trSheets{s},'.xls')).FBAMin; 
             catch e
-                minRequirements = array2table(zeros(length(model.rxns),1));
+                minRequirements = {};
             end
         end
 
@@ -68,7 +67,11 @@ function model = createContextSpecificModel(modelPath, trDataPath, mediumDataPat
                             andsToCompare = [andsToCompare tr_Val];
                         end
                     end
-                    orsToCompare = [orsToCompare min(andsToCompare)];
+                    if strcmp(gmAndOperation,'MIN')
+                        orsToCompare = [orsToCompare min(andsToCompare)];
+                    else 
+                        orsToCompare = [orsToCompare round(geomean(andsToCompare))];
+                    end
                 end
 
                 operands = split(model.grRules{i});
@@ -79,8 +82,7 @@ function model = createContextSpecificModel(modelPath, trDataPath, mediumDataPat
                     end
                 end
                 log{i,4} = value;
-
-                if gmMAX == 1
+                if strcmp(gmOrOperation,'MAX')
                     log{i,5} = max(orsToCompare);
                 else 
                     log{i,5} = sum(orsToCompare);
@@ -101,7 +103,11 @@ function model = createContextSpecificModel(modelPath, trDataPath, mediumDataPat
                     end
                 end
                 log{i,4} = value;
-                log{i,5} = min(numbersToCompare);
+                if strcmp(gmAndOperation,'MIN')
+                    log{i,5} = min(numbersToCompare);
+                else 
+                    log{i,5} = round(geomean(numbersToCompare));
+                end
 
             % Gene combination OR
             elseif contains(model.grRules{i},"or")
@@ -118,7 +124,7 @@ function model = createContextSpecificModel(modelPath, trDataPath, mediumDataPat
                     end
                 end
                 log{i,4} = value;
-                if gmMAX == 1
+                if strcmp(gmOrOperation,'MAX')
                     log{i,5} = max(orsToCompare);
                 else 
                     log{i,5} = sum(orsToCompare);
@@ -127,21 +133,32 @@ function model = createContextSpecificModel(modelPath, trDataPath, mediumDataPat
 
             %Set reaction bounds
             if ~isempty(log{i,5})
-                if (meetMinimumReq == 1 && log{i,5} >= str2double(minRequirements{i})) || meetMinimumReq == 0
-                    if constrAll == 1 && model.lb(i) < 0
-                        value = log{i,5};
-                        model = changeRxnBounds(model,model.rxns{i},-value,'l');
-                        model = changeRxnBounds(model,model.rxns{i},value,'u');
-                    elseif model.lb(i) == 0
-                        model = changeRxnBounds(model,model.rxns{i},log{i,5},'u');
+                try
+                    constrainRxn = true;
+                    if ~isempty(minRequirements)
+                        if log{i,5} < str2double(minRequirements{i})
+                            constrainRxn = false;
+                        end
                     end
+                    
+                    if constrainRxn
+                        if constrAll == 1 && model.lb(i) < 0
+                            value = log{i,5};
+                            model = changeRxnBounds(model,model.rxns{i},-value,'l');
+                            model = changeRxnBounds(model,model.rxns{i},value,'u');
+                        elseif model.lb(i) == 0
+                            model = changeRxnBounds(model,model.rxns{i},log{i,5},'u');
+                        end
+                    end
+                catch e
+                  disp(e);
                 end
             end
         end
 
 
         % Delete Inactive genes
-        model = deleteInactiveGenes(model, trData, trDataPath, thApproach, lowerTh, upperTh, s, growthNotAffectingGeneDel);
+        model = deleteInactiveGenes(model, trData, trDataPath, thApproach, lowerTh, upperTh, s, growthNotAffectingGeneDel, percentile);
 
 
         % Apply medium data

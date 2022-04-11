@@ -36,6 +36,7 @@ function calculateFluxShifts(source, target)
             filename = strcat(T(i).folder, '\', T(i).name); % full path
             data=readtable(filename,'Sheet',sheetName);
 
+            try
             % Read target fluxes
             minFlux = data.MinFlux;
             maxFlux = data.MaxFlux;
@@ -102,6 +103,9 @@ function calculateFluxShifts(source, target)
             resultFileName = strcat(temp(1),'_flux_shifts.xls');
             fullResultFilePath = strcat(folderName, resultFileName);
             writetable(newData,fullResultFilePath{1},'AutoFitWidth',false);
+            catch e
+                disp(e);
+            end
         end
     end
 end

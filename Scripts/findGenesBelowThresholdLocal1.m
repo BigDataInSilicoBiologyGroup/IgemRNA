@@ -3,16 +3,16 @@ function genes = findGenesBelowThresholdLocal1(threshold, trDataPath, sheetIndex
         trDataAll = {};
         cnt = 1;
 
-        % Get transcriptomics data sheet names
+        % Get transcriptomics data sheet (phenotype) name
         trSheets = sheetnames(trDataPath);
         sheetNameParts = split(trSheets{sheetIndex},'_');
         phenotype = sheetNameParts{2};
 
-        % Get target trancriptomics sheet
+        % Get target trancriptomics sheet data
         trTarget=readtable(trDataPath,'Sheet',trSheets{sheetIndex}); 
 
-        % Get all data sets of the same phemotype    
-        for i=1:1:height(trSheets) % GENES MUST BE IN THE SAME ORDER 
+        % Get all data sets of the same phemotype (GENES MUST BE IN THE SAME ORDER)  
+        for i=1:1:height(trSheets) 
             if contains(trSheets{i}, phenotype)
                 data=readtable(trDataPath,'Sheet',trSheets{i}); 
                 if length(trDataAll) == 0

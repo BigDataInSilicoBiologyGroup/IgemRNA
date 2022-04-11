@@ -8,12 +8,12 @@
 threshold = 0; % (possible: 0-5)
 
 % Find the files described in the comments above
-dest = strcat('..\Results post-optimization\*S47D*.xls');
+dest = strcat('..\Results post-optimization\Context-specific models\*S47D*.xls');
 S = dir(dest);
 count = length(S);
 
 % Find WT data file (is used to compare with mutants)
-destWT = strcat('..\Results post-optimization\SRR8994357_WT_GT1_0.xls');
+destWT = strcat('..\Results post-optimization\Context-specific models\SRR8994357_WT_GT1_0.xls');
 WT = dir(destWT);
 sheetName = 'Reaction List';
 filename = strcat(WT.folder, '\', WT.name);

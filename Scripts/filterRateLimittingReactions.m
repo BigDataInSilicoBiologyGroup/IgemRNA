@@ -17,11 +17,15 @@ function filterRateLimittingReactions(phenotype)
         counter = 2;
         for n=1:1:height(data)
             ub = str2double(data.UpperBound{n});
+            try
             maxFlux = str2double(data.MaxFlux{n});
             gpr = data.GPR{n};
             if ub == maxFlux && ub ~= 0 && maxFlux ~= 1000 && ~isempty(gpr)
                 result(counter,:) = table2cell(data(n,:));
                 counter = counter + 1;
+            end
+            catch e
+             disp(e);
             end
         end
         resultAll{i} = result;
