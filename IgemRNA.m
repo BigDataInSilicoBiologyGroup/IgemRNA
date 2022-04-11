@@ -27,7 +27,7 @@ addpath('Scripts');
 openDlg();
 
 function openDlg()
-    d = dialog('Position',[550 150 610 650],'Name','IgemRNA');
+    d = dialog('Position',[550 50 610 650],'Name','IgemRNA');
     
     % Transcriptomics Data Input
     global trGroup
@@ -69,9 +69,11 @@ function openDlg()
     
     % Gene Mapping Approach Radio Buttons
     global gmGroup
-    gmGroup = uibuttongroup('parent',d,'Title','Gene Mapping Approach','TitlePosition','lefttop','visible','off','Position',[.01 .38 0.3 0.1]);
-    gm1 = uicontrol('Style','Radio','String','AND/OR=MIN/MAX','pos',[10 30 400 15],'parent',gmGroup);
-    gm2 = uicontrol('Style','Radio','String','AND/OR=MIN/SUM','pos',[10 10 400 15],'parent',gmGroup);
+    gmGroup = uibuttongroup('parent',d,'Title','Gene Mapping Approach (AND/OR)','TitlePosition','lefttop','visible','off','Position',[.01 .38 0.3 0.1]);
+    gmMinMax = uicontrol('Style','Radio','String','Min/Max','pos',[10 30 70 15],'parent',gmGroup);
+    gmMinSum = uicontrol('Style','Radio','String','Min/Sum','pos',[10 10 70 15],'parent',gmGroup);
+    gmGmMax = uicontrol('Style','Radio','String','GM/Max','pos',[90 30 70 15],'parent',gmGroup);
+    gmGmSum = uicontrol('Style','Radio','String','GM/Sum','pos',[90 10 70 15],'parent',gmGroup);
     gmGroup.Visible = 'off';
     
     % Bound Constraining Options
@@ -80,8 +82,8 @@ function openDlg()
     constrIrreversible = uicontrol('Style','Radio','String','Only irreversible reactions','pos',[10 30 310 15],'parent',boundConstrGroup);
     consrtAll = uicontrol('Style', 'Radio', 'String', 'All reactions','pos', [10 10 310 15], 'parent',boundConstrGroup);
     % Preserve growth requirements options
-    test1 = uicontrol('parent',boundConstrGroup,'Style','checkbox','String','Growth not affecting gene deletion only', 'pos',[180 30 400 15]);
-    test2 = uicontrol('parent',boundConstrGroup,'Style','checkbox','String','Meet minimum growth requirements', 'pos',[180 10 400 15]);
+    growthNotAffectingGeneDel = uicontrol('parent',boundConstrGroup,'Style','checkbox','String','Growth not affecting gene deletion only', 'pos',[180 30 400 15],'Enable','off');
+    meetMinimumGrowthReq = uicontrol('parent',boundConstrGroup,'Style','checkbox','String','Meet minimum growth requirements', 'pos',[180 10 400 15]);
     boundConstrGroup.Visible = 'off';
     
     global nonOptTasksGroup
@@ -122,8 +124,8 @@ function openDlg()
     excludeBiomass = uicontrol('parent',postOptTasksGroup,'Style','checkbox','String','Exclude biomass', 'pos',[10 40 110 20]);
     biomassId = uicontrol('parent', postOptTasksGroup, 'String','r_4041', 'Style', 'edit', 'HorizontalAlignment', 'left', 'pos', [120, 45, 140, 20]);
     
-    initCobraWithUpdates = uicontrol('visible','off','Style','Radio','String','Initialize CobraToolbox With Updates','pos',[10 20 400 15],'parent',postOptTasksGroup);
-    initCobraNoUpdates = uicontrol('visible','off','Style', 'Radio', 'String', 'Initialize CobraToolbox Without Updates','pos', [10 5 400 15], 'parent',postOptTasksGroup);
+    initCobraNoUpdates = uicontrol('visible','off','Style','Radio','String','Initialize CobraToolbox Without Updates','pos',[10 20 400 15],'parent',postOptTasksGroup);
+    initCobraWithUpdates = uicontrol('visible','off','Style', 'Radio', 'String', 'Initialize CobraToolbox With Updates','pos', [10 5 400 15], 'parent',postOptTasksGroup);
     
     Okbtn = uicontrol('parent', d, 'Style', 'pushbutton', 'String', 'OK', 'pos',[445, 10, 75, 20], 'Callback', {@OK});
     Cancelbtn = uicontrol('parent', d, 'Style', 'pushbutton', 'String', 'Close', 'pos',[520, 10, 75, 20], 'Callback', 'delete(gcf)');
@@ -135,6 +137,8 @@ global transcriptomicsDataSamples
 global nonOptTasksGroup
 global gmGroup
 global boundConstrGroup
+global initCobraWithUpdates
+global initCobraNoUpdates
     [FileName, FilePath] = uigetfile({'*.xlsx; *.xls'});
     if ~ischar(FileName)
        return;
@@ -145,6 +149,8 @@ global boundConstrGroup
         postOptTasksGroup.Visible = 'on';
         gmGroup.Visible = 'on';
         boundConstrGroup.Visible = 'on';
+        initCobraWithUpdates.Visible = 'on';
+        initCobraNoUpdates.Visible = 'on';
     end
     if contains(textInput.Parent().Title,"Transcriptomics")
         trDataPath = textInput.String;
@@ -161,8 +167,6 @@ function PostOpt_changed(sender, event)
     global postOptLabel1
     global postOptLabel2
     global transcriptomicsDataSamples
-    global initCobraWithUpdates
-    global initCobraNoUpdates
     
     if contains(sender.String, 'flux shifts')
         if sender.Value == 1
@@ -178,14 +182,6 @@ function PostOpt_changed(sender, event)
             postOptLabel1.Visible = 'off';
             postOptLabel2.Visible = 'off';
         end
-    end
-    
-    if sender.Value == 1
-        initCobraWithUpdates.Visible = 'on';
-        initCobraNoUpdates.Visible = 'on';
-    elseif sender.Parent().Children(7).Value == 0 && sender.Parent().Children(8).Value == 0
-        initCobraWithUpdates.Visible = 'off';
-        initCobraNoUpdates.Visible = 'off';
     end
 end
 
@@ -262,13 +258,16 @@ function OK(~,~)
     data.percentile = thValueSelectionGroup.Children(1).Value;
 
     %Gene mapping approach
-    data.gmMAX = gmGroup.Children(2).Value;
-    data.gmSUM = gmGroup.Children(1).Value;
+%     data.gmMAX = gmGroup.Children(2).Value;
+%     data.gmSUM = gmGroup.Children(1).Value;
+    data.gmGmSum = gmGroup.Children(1).Value;
+    data.gmGmMax = gmGroup.Children(2).Value;
+    data.gmMinSum = gmGroup.Children(3).Value;
+    data.gmMinMax = gmGroup.Children(4).Value;
 
     %Bound constraining options
     data.constrIrreversible = boundConstrGroup.Children(4).Value;
     data.constrAll = boundConstrGroup.Children(3).Value;
-    
     data.meetMinimumGrowthReq = boundConstrGroup.Children(1).Value;
     data.growthNotAffectingGeneDel = boundConstrGroup.Children(2).Value;
     
@@ -301,10 +300,10 @@ function OK(~,~)
     
     data.objectiveFunction = postOptTasksGroup.Children(5).String;
     data.excludeBiomassEquation = postOptTasksGroup.Children(4).Value;
-    data.biomassId = postOptTasksGroup.Children(3).Value;
+    data.biomassId = postOptTasksGroup.Children(3).String;
     
-    data.initCobraNoUpdates = postOptTasksGroup.Children(1).Value;
-    data.initCobraWithUpdates = postOptTasksGroup.Children(2).Value;
+    data.initCobraWithUpdates = postOptTasksGroup.Children(1).Value;
+    data.initCobraNoUpdates = postOptTasksGroup.Children(2).Value;
     
     main(data);
 end
